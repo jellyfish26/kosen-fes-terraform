@@ -1,5 +1,5 @@
 resource "aws_vpc" "vpc_main" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = "10.0.${var.base_ip}.0/22"
   enable_dns_support = true
   enable_dns_hostnames = true
 
@@ -14,7 +14,7 @@ resource "aws_internet_gateway" "vpc_gw" {
 
 resource "aws_subnet" "vpc_public1_subnet" {
   vpc_id = aws_vpc.vpc_main.id
-  cidr_block = "10.0.1.0/24"
+  cidr_block = "10.0.${var.base_ip}.0/24"
   availability_zone = "ap-northeast-1a"
 
   map_public_ip_on_launch = true
@@ -26,7 +26,7 @@ resource "aws_subnet" "vpc_public1_subnet" {
 
 resource "aws_subnet" "vpc_public2_subnet" {
   vpc_id = aws_vpc.vpc_main.id
-  cidr_block = "10.0.2.0/24"
+  cidr_block = "10.0.${var.base_ip + 1}.0/24"
   availability_zone = "ap-northeast-1c"
 
   map_public_ip_on_launch = true
@@ -38,7 +38,7 @@ resource "aws_subnet" "vpc_public2_subnet" {
 
 resource "aws_subnet" "vpc_private1_subnet" {
   vpc_id = aws_vpc.vpc_main.id
-  cidr_block = "10.0.11.0/24"
+  cidr_block = "10.0.${var.base_ip + 2}.0/24"
   availability_zone = "ap-northeast-1a"
 
   map_public_ip_on_launch = true
@@ -50,7 +50,7 @@ resource "aws_subnet" "vpc_private1_subnet" {
 
 resource "aws_subnet" "vpc_private2_subnet" {
   vpc_id = aws_vpc.vpc_main.id
-  cidr_block = "10.0.12.0/24"
+  cidr_block = "10.0.${var.base_ip + 3}.0/24"
   availability_zone = "ap-northeast-1c"
 
   map_public_ip_on_launch = true

@@ -30,12 +30,12 @@ data "aws_iam_policy_document" "ecs_iam_assume" {
 }
 
 resource "aws_iam_policy" "ecs_iam_policy" {
-  name        = "ecs-policy"
+  name        = "ecs-policy-${var.ecs_name}"
   policy      = data.aws_iam_policy_document.ecs_iam_s3.json
 }
 
 resource "aws_iam_role" "ecs_iam" {
-  name = "ecs-role"
+  name = "ecs-role-${var.ecs_name}"
   assume_role_policy = data.aws_iam_policy_document.ecs_iam_assume.json
 }
 
