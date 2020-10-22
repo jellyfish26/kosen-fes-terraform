@@ -49,6 +49,10 @@ resource "aws_iam_role_policy_attachment" "ecs-exec-attachment" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+resource "aws_cloudwatch_log_group" "ecs-cloud-watch" {
+  name = "${var.ecs_name}-log-group"
+}
+
 resource "aws_ecs_task_definition" "ecs_task" {
   family = "${var.ecs_name}-task-definition"
   cpu = var.cpu
@@ -67,7 +71,15 @@ resource "aws_ecs_task_definition" "ecs_task" {
         "containerPort": 80,
         "hostPort": 80
       }
-    ]
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${var.ecs_name}-log-group",
+        "awslogs-stream-prefix": "${var.ecs_name}-log-group",
+        "awslogs-region": "ap-northeast-1"
+      }
+    }
   }
 ]
 TASK_DEFINITION
