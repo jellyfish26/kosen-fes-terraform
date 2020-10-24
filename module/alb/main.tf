@@ -41,6 +41,10 @@ resource "aws_lb_target_group" "alb_tg" {
     port = "80"
     path = "/ping"
   }
+
+  stickiness {
+    type = "lb_cookie"
+  }
 }
 
 resource "aws_lb_listener" "alb_listener" {
