@@ -8,3 +8,6 @@ variable "base_ip" {
 
 variable "s3_bucket" {
 }
+
+variable "domain" {
+}

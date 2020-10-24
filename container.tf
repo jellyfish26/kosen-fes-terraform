@@ -85,6 +85,7 @@ module "alb-reversi" {
   name = "reversi-back"
   base_ip = 0
   s3_bucket = aws_s3_bucket.reversi_back_state
+  domain = aws_route53_zone.fes_main
 }
 
 module "ecs-reversi" {
@@ -106,6 +107,7 @@ module "alb-clicker" {
   name = "clicker-back"
   base_ip = 4
   s3_bucket = aws_s3_bucket.clicker_back_state
+  domain = aws_route53_zone.fes_main
 }
 
 module "ecs-clicker" {
