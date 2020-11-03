@@ -93,6 +93,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   logging_config {
     include_cookies = false
     bucket = aws_s3_bucket.log.bucket_domain_name
+    prefix = var.name
   }
 
   default_cache_behavior {
@@ -109,8 +110,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl = 0
-    default_ttl = 3600
-    max_ttl = 86400
+    default_ttl = 300
+    max_ttl = 600
   }
 
   custom_error_response {
@@ -118,6 +119,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     response_code = 200
     response_page_path = "/"
   }
+
+  price_class = "PriceClass_All"
 
   restrictions {
     geo_restriction {
