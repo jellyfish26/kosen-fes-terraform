@@ -36,3 +36,10 @@ module "cdn-site" {
   accept-ip = ["202.24.240.0/21", "160.86.219.12/32"]
   domain = aws_route53_zone.fes_main
 }
+
+module "math-site" {
+  source = "./module/cloudfront"
+  name = "mandelbrot"
+  accept-ip = ["202.24.240.0/21", "160.86.219.12/32"]
+  domain = aws_route53_zone.fes_main
+}
