@@ -76,6 +76,53 @@ resource "aws_acm_certificate_validation" "main" {
   validation_record_fqdns = [aws_route53_record.site_cer["${var.name}.nitncfes.net"].fqdn]
 }
 
+resource "aws_wafv2_ip_set" "accept_ip" {
+  name               = "${var.name}-ipwaf"
+  scope              = "CLOUDFRONT"
+  ip_address_version = "IPV4"
+  addresses          = var.accept-ip
+
+  provider = aws.virginia
+}
+
+resource "aws_wafv2_web_acl" "ip_waf" {
+  name        = "${var.name}-waf"
+  scope       = "CLOUDFRONT"
+
+  default_action {
+    block {}
+  }
+
+  rule {
+    name = "accept-ip"
+    priority = 1
+
+    action {
+      allow {}
+    }
+
+    statement {
+      ip_set_reference_statement {
+        arn = aws_wafv2_ip_set.accept_ip.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name = "${var.name}-cloudfront-ip"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name = "${var.name}-cloudfront"
+    sampled_requests_enabled   = false
+  }
+
+  provider = aws.virginia
+}
+
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
     domain_name = aws_s3_bucket.site.bucket_regional_domain_name
@@ -117,7 +164,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   custom_error_response {
     error_code = 403
     response_code = 200
-    response_page_path = "/"
+    response_page_path = "/404.html"
   }
 
   price_class = "PriceClass_All"
@@ -139,6 +186,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   aliases = ["${var.name}.nitncfes.net"]
+
+  web_acl_id = aws_wafv2_web_acl.ip_waf.arn
 }
 
 resource "aws_route53_record" "sub_cname" {

@@ -15,3 +15,24 @@ module "main-site" {
   name = "site"
   domain = aws_route53_zone.fes_main
 }
+
+module "info3-site" {
+  source = "./module/cloudfront"
+  name = "3info"
+  accept-ip = ["202.24.240.0/21", "160.86.219.12/32"]
+  domain = aws_route53_zone.fes_main
+}
+
+module "dev-site" {
+  source = "./module/cloudfront"
+  name = "devsite"
+  accept-ip = ["202.24.240.0/21", "160.86.219.12/32"]
+  domain = aws_route53_zone.fes_main
+}
+
+module "cdn-site" {
+  source = "./module/cloudfront"
+  name = "cdn"
+  accept-ip = ["202.24.240.0/21", "160.86.219.12/32"]
+  domain = aws_route53_zone.fes_main
+}
