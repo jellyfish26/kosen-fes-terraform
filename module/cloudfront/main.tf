@@ -2,6 +2,13 @@ resource "aws_s3_bucket" "site" {
   bucket = "${var.name}-site-static"
   acl = "private"
 
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET"]
+    allowed_origins = var.accept_origin
+    max_age_seconds = 0
+  }
+
   tags = {
     Name = "${var.name}-bucket"
   }
@@ -80,7 +87,7 @@ resource "aws_wafv2_ip_set" "accept_ip" {
   name               = "${var.name}-ipwaf"
   scope              = "CLOUDFRONT"
   ip_address_version = "IPV4"
-  addresses          = var.accept-ip
+  addresses          = var.accept_ip
 
   provider = aws.virginia
 }
@@ -150,6 +157,9 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
     forwarded_values {
       query_string = false
+
+      headers = ["Origin"]
+
       cookies {
         forward = "none"
       }
