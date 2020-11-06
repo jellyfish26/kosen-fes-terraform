@@ -64,25 +64,12 @@ resource "aws_eip" "eip_main" {
   vpc = true
 }
 
-resource "aws_eip" "eip_sub" {
-  vpc = true
-}
-
 resource "aws_nat_gateway" "vpc_nat_main" {
   subnet_id = aws_subnet.vpc_public1_subnet.id
   allocation_id = aws_eip.eip_main.id
 
   tags = {
     Name = "${var.name}-gw-main"
-  }
-}
-
-resource "aws_nat_gateway" "vpc_nat_sub" {
-  subnet_id = aws_subnet.vpc_public2_subnet.id
-  allocation_id = aws_eip.eip_sub.id
-
-  tags = {
-    Name = "${var.name}-gw-sub"
   }
 }
 
@@ -123,7 +110,7 @@ resource "aws_route" "vpc_private1_route" {
 resource "aws_route" "vpc_private2_route" {
   destination_cidr_block = "0.0.0.0/0"
   route_table_id = aws_route_table.vpc_private2_table.id
-  nat_gateway_id = aws_nat_gateway.vpc_nat_sub.id
+  nat_gateway_id = aws_nat_gateway.vpc_nat_main.id
 }
 
 resource "aws_route_table_association" "vpc_private1_ac" {

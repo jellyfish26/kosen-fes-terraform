@@ -27,6 +27,7 @@ module "dev-site" {
   source = "./module/cloudfront"
   name = "devsite"
   accept_ip = ["202.24.240.0/21", "160.86.219.12/32"]
+  cloudfront_headers = ["Origin"]
   domain = aws_route53_zone.fes_main
 }
 
@@ -35,6 +36,7 @@ module "cdn-site" {
   name = "cdn"
   accept_ip = ["202.24.240.0/21", "160.86.219.12/32"]
   accept_origin = ["https://devsite.nitncfes.net", "https://site.nitncfes.net"]
+  cloudfront_headers = ["Origin"]
   domain = aws_route53_zone.fes_main
 }
 
@@ -42,5 +44,12 @@ module "math-site" {
   source = "./module/cloudfront"
   name = "mandelbrot"
   accept_ip = ["202.24.240.0/21", "160.86.219.12/32"]
+  cloudfront_headers = ["Origin"]
+  domain = aws_route53_zone.fes_main
+}
+
+module "lottery" {
+  source = "./module/cloudfront"
+  name = "lottery"
   domain = aws_route53_zone.fes_main
 }

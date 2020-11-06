@@ -10,5 +10,9 @@ variable "accept_ip" {
 }
 
 variable "accept_origin" {
+  default = ["https://example.com"]
+}
+
+variable "cloudfront_headers" {
   default = []
 }
