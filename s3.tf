@@ -15,3 +15,12 @@ resource "aws_s3_bucket" "clicker_back_state" {
     Name = "clicker-back"
   }
 }
+
+resource "aws_s3_bucket" "lottery_back_state" {
+  bucket = "lottery-back-state-bucket"
+  acl    = "private"
+
+  tags = {
+    Name = "lottery-back"
+  }
+}

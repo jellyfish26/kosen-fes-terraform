@@ -14,6 +14,14 @@ resource "aws_ecr_repository" "clicker_back" {
   }
 }
 
+resource "aws_ecr_repository" "lottery_back" {
+  name = "lottery-back"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
 resource "aws_ecr_repository_policy" "reveri_policy" {
   repository = aws_ecr_repository.reversi_back.name
 
@@ -49,6 +57,39 @@ EOF
 
 resource "aws_ecr_repository_policy" "clicker_policy" {
   repository = aws_ecr_repository.clicker_back.name
+
+  policy = <<EOF
+{
+    "Version": "2008-10-17",
+    "Statement": [
+        {
+            "Sid": "new policy",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": [
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:PutImage",
+                "ecr:InitiateLayerUpload",
+                "ecr:UploadLayerPart",
+                "ecr:CompleteLayerUpload",
+                "ecr:DescribeRepositories",
+                "ecr:GetRepositoryPolicy",
+                "ecr:ListImages",
+                "ecr:DeleteRepository",
+                "ecr:BatchDeleteImage",
+                "ecr:SetRepositoryPolicy",
+                "ecr:DeleteRepositoryPolicy"
+            ]
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_ecr_repository_policy" "lottery_policy" {
+  repository = aws_ecr_repository.lottery_back.name
 
   policy = <<EOF
 {
@@ -123,3 +164,26 @@ module "ecs-clicker" {
   vpc_private_main_subnet = module.alb-clicker.vpc_private_main_subnet
   vpc_private_sub_subnet = module.alb-clicker.vpc_private_sub_subnet
 }
+
+module "alb-lottery" {
+  source = "./module/alb"
+  name = "lottery-back"
+  base_ip = 8
+  s3_bucket = aws_s3_bucket.lottery_back_state
+  domain = aws_route53_zone.fes_main
+}
+
+module "ecs-lottery" {
+  source = "./module/ecs"
+  ecs_name = "lottery-back"
+  account_id = data.aws_caller_identity.self.account_id
+  cpu = "2048"
+  memory = "8192"
+  depends_on = [module.alb-lottery]
+  desired_count = 1
+  load_balancer = module.alb-lottery.target_group
+  vpc_main = module.alb-lottery.vpc
+  vpc_private_main_subnet = module.alb-lottery.vpc_private_main_subnet
+  vpc_private_sub_subnet = module.alb-lottery.vpc_private_sub_subnet
+}
+
