@@ -13,6 +13,7 @@ module "reversi-site" {
 module "main-site" {
   source = "./module/cloudfront"
   name = "site"
+  cloudfront_headers = ["Origin"]
   domain = aws_route53_zone.fes_main
 }
 
@@ -31,7 +32,8 @@ module "dev-site" {
 module "cdn-site" {
   source = "./module/cloudfront"
   name = "cdn"
-  accept_origin = ["https://site.nitncfes.net", "https://devsite.nitncfes.net"]
+  accept_origin = ["https://site.nitncfes.net"]
+  cloudfront_headers = ["Origin"]
   domain = aws_route53_zone.fes_main
 }
 
