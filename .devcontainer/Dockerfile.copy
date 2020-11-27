@@ -1,0 +1,5 @@
+FROM hashicorp/terraform:0.13.5
+
+ENV AWS_ACCESS_KEY_ID="hogehoge"
+ENV AWS_SECRET_ACCESS_KEY="fugafuga"
+ENV AWS_DEFAULT_REGION="ap-northeast-1"
